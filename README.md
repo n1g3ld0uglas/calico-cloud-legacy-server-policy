@@ -27,39 +27,10 @@ sudo /usr/sbin/usermod -aG docker $USER
 sudo chown $USER:docker /var/run/docker.sock
 ```
 
-This ```DID NOT WORK``` after original test:
-```
-sudo docker run -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
-```
 
-This ```DID WORK``` after adding the privleged flag:
-```
-sudo docker run --privileged -d --restart=unless-stopped -p 80:80 -p 443:443 rancher/rancher
-```
 This command is outlined in the quickstart guide: <br/>
 https://www.suse.com/products/suse-rancher/get-started/
 
-Find the container ID - ace724ca4640
-```
-docker ps
-```
-
-Find the bootstrap password required for login:
-```
-docker logs  ace724ca4640  2>&1 | grep "Bootstrap Password:"
-```
-
-<img width="776" alt="Screenshot 2021-09-16 at 16 15 45" src="https://user-images.githubusercontent.com/82048393/134907623-0d78b8c0-a5d5-4c4d-b7ba-faf234a0fdf2.png">
-
-
-We can immediately take the action to create a new cluster from multiple distributions
-
-![Screenshot 2021-09-27 at 13 12 05](https://user-images.githubusercontent.com/82048393/134905911-84376512-2885-4072-a2fb-630942294325.png)
-
-
-For the purpose of this session, we will configure an Custom cluster through Rancher
-
-![Screenshot 2021-09-27 at 12 43 43](https://user-images.githubusercontent.com/82048393/134901725-3c6560b1-b9d6-46ca-8950-241f61fa7cfd.png)
 
 ## Install Docker on EC2 instances
 
@@ -105,9 +76,32 @@ apt-get install docker-ce docker-ce-cli containerd.io
 Do the same on the other EC2 instances. <br/>
 Rancher UI will generate a slightly different install script for control plane and workers:
 
+## Step 1: Download and extract the binary
 
+This step requires Docker, but it can be run from any machine with Docker installed. <br/>
+It doesn’t have to be the host you will run it on (i.e your laptop is fine).<br/>
+<br/>
+Use the following command to download the cnx-node image.
 
-## Install kubectl binary with curl on Linux
+```
+docker pull quay.io/tigera/cnx-node:v3.10.0
+docker pull cnx-node:
+```
+
+Confirm that the image has loaded by typing docker images.
+
+```
+REPOSITORY       TAG           IMAGE ID       CREATED         SIZE
+quay.io/tigera/cnx-node      v3.10.0        e07d59b0eb8a   2 minutes ago   42MB
+```
+
+Create a temporary cnx-node container.
+
+```
+docker create --name container quay.io/tigera/cnx-node:v3.10.0
+```
+
+## Step X: Install kubectl binary with curl on Linux
 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux <br/>
 <br/>
 Download the latest release with the command:
