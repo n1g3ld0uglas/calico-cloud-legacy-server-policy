@@ -73,43 +73,7 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io
 ```
 
-## Step 1: Pulling images from Quay.io
-
-If pulling images directly from ```quay.io/tigera``` , you will likely want to use the credentials provided to you by your Tigera support representative. <br/>
-If using a private registry, use your private registry credentials instead.
-
-```
-kubectl create secret generic tigera-pull-secret \
-    --type=kubernetes.io/dockerconfigjson -n tigera-operator \
-    --from-file=.dockerconfigjson=config.json
-```
-
-## Step 2: Download and extract the binary
-
-This step requires Docker, but it can be run from any machine with Docker installed. <br/>
-It doesn’t have to be the host you will run it on (i.e your laptop is fine).<br/>
-<br/>
-Use the following command to download the cnx-node image.
-
-```
-docker pull quay.io/tigera/cnx-node:v3.10.0
-docker pull cnx-node:
-```
-
-Confirm that the image has loaded by typing docker images.
-
-```
-REPOSITORY       TAG           IMAGE ID       CREATED         SIZE
-quay.io/tigera/cnx-node      v3.10.0        e07d59b0eb8a   2 minutes ago   42MB
-```
-
-Create a temporary cnx-node container.
-
-```
-docker create --name container quay.io/tigera/cnx-node:v3.10.0
-```
-
-## Step X: Install kubectl binary with curl on Linux
+## Step 1: Install kubectl binary with curl on Linux
 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux <br/>
 <br/>
 Download the latest release with the command:
@@ -143,6 +107,42 @@ mv ./kubectl ~/.local/bin/kubectl
 Test to ensure the version you installed is up-to-date:
 ```
 kubectl version --client
+```
+
+## Step 2: Pulling images from Quay.io
+
+If pulling images directly from ```quay.io/tigera``` , you will likely want to use the credentials provided to you by your Tigera support representative. <br/>
+If using a private registry, use your private registry credentials instead.
+
+```
+kubectl create secret generic tigera-pull-secret \
+    --type=kubernetes.io/dockerconfigjson -n tigera-operator \
+    --from-file=.dockerconfigjson=config.json
+```
+
+## Step 3: Download and extract the binary
+
+This step requires Docker, but it can be run from any machine with Docker installed. <br/>
+It doesn’t have to be the host you will run it on (i.e your laptop is fine).<br/>
+<br/>
+Use the following command to download the cnx-node image.
+
+```
+docker pull quay.io/tigera/cnx-node:v3.10.0
+docker pull cnx-node:
+```
+
+Confirm that the image has loaded by typing docker images.
+
+```
+REPOSITORY       TAG           IMAGE ID       CREATED         SIZE
+quay.io/tigera/cnx-node      v3.10.0        e07d59b0eb8a   2 minutes ago   42MB
+```
+
+Create a temporary cnx-node container.
+
+```
+docker create --name container quay.io/tigera/cnx-node:v3.10.0
 ```
 
 ## Download the Kubeconfig file from Rancher UI
