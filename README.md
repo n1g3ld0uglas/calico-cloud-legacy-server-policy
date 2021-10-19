@@ -116,7 +116,7 @@ If using a private registry, use your private registry credentials instead.
 
 ```
 kubectl create secret generic tigera-pull-secret \
-    --type=kubernetes.io/dockerconfigjson -n tigera-operator \
+    --type=kubernetes.io/dockerconfigjson -n default \
     --from-file=.dockerconfigjson=config.json
 ```
 
