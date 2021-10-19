@@ -73,10 +73,18 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io
 ```
 
-Do the same on the other EC2 instances. <br/>
-Rancher UI will generate a slightly different install script for control plane and workers:
+## Step 1: Pulling images from Quay.io
 
-## Step 1: Download and extract the binary
+If pulling images directly from quay.io/tigera, you will likely want to use the credentials provided to you by your Tigera support representative. <br/>
+If using a private registry, use your private registry credentials instead.
+
+```
+kubectl create secret generic tigera-pull-secret \
+    --type=kubernetes.io/dockerconfigjson -n tigera-operator \
+    --from-file=.dockerconfigjson=<path/to/pull/secret>
+```
+
+## Step 2: Download and extract the binary
 
 This step requires Docker, but it can be run from any machine with Docker installed. <br/>
 It doesn’t have to be the host you will run it on (i.e your laptop is fine).<br/>
