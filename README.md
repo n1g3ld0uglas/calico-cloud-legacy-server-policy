@@ -1,6 +1,13 @@
-# calico-cloud-legacy-server-policy
-Creating network policy for legacy servers
-
+# Calico Cloud Legacy Server Policy
+This lab will demonstrate how you can use   Calico   to   protect   hosts   that   are   not   kubernetes   cluster   nodes   <br/>
+<br/>
+In   this   lab,   you   will:    <br/>
+*  Install   calico   on   the   bastion   host   and   configure   it   with   failsafes   so   that   you   will   not   
+lock   yourself   out   by   accident    
+*   Install   a   webserver   that   will   be   used   as   the   target   service    
+*  Enable   Automatic   HostEndpoints   for   your   kubernetes   cluster   nodes    
+*   Configure   a   GlobalNetworkPolicy   to   allow   traffic   to   the   webserver    
+*   Configure   a   HostEndpoint   for   the   bastion   host   that   will   start   to   enforce   the   traffic   
 
 
 ## Install Docker on the legacy server
@@ -73,7 +80,38 @@ apt-get update
 apt-get install docker-ce docker-ce-cli containerd.io
 ```
 
-## Step 1: Install kubectl binary with curl on Linux
+## Step 1: Install Calico on the bastion host    
+Install ```ipset``` on the bastion host as it is required by Calico    
+```
+sudo apt-get install -y ipset  
+```
+
+Extract the ```cnx-node``` binary from the ```control1``` node and transfer it to the bastion node
+
+```
+ssh   control1   
+```
+
+```
+sudo   docker   create   --name   container   quay.io/tigera/cnx-node:v3.10.0   
+sudo   docker   cp   container:/bin/calico-node   cnx-node   
+sudo   docker   rm   container   
+ ```
+ 
+Get   back   to   the   bastion   host,   and   prepare   the   binary    
+
+```
+exit   
+```
+
+```
+scp   control1:cnx-node   .   
+sudo   mv   cnx-node   /usr/local/bin/   
+sudo   chown   root.root   /usr/local/bin/cnx-node   
+sudo   chmod   755   /usr/local/bin/cnx-node 
+```
+
+## Step 2: Install kubectl binary with curl on Linux
 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux <br/>
 <br/>
 Download the latest release with the command:
