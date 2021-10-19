@@ -75,13 +75,13 @@ apt-get install docker-ce docker-ce-cli containerd.io
 
 ## Step 1: Pulling images from Quay.io
 
-If pulling images directly from quay.io/tigera, you will likely want to use the credentials provided to you by your Tigera support representative. <br/>
+If pulling images directly from ```quay.io/tigera``` , you will likely want to use the credentials provided to you by your Tigera support representative. <br/>
 If using a private registry, use your private registry credentials instead.
 
 ```
 kubectl create secret generic tigera-pull-secret \
     --type=kubernetes.io/dockerconfigjson -n tigera-operator \
-    --from-file=.dockerconfigjson=<path/to/pull/secret>
+    --from-file=.dockerconfigjson=config.json
 ```
 
 ## Step 2: Download and extract the binary
