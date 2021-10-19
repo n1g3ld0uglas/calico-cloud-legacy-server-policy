@@ -93,9 +93,9 @@ ssh   control1
 ```
 
 ```
-sudo   docker   create   --name   container   quay.io/tigera/cnx-node:v3.10.0   
-sudo   docker   cp   container:/bin/calico-node   cnx-node   
-sudo   docker   rm   container   
+sudo docker create --name container quay.io/tigera/cnx-node:v3.10.0   
+sudo docker cp container:/bin/calico-node cnx-node   
+sudo docker rm container   
  ```
  
 Get   back   to   the   bastion   host,   and   prepare   the   binary    
@@ -105,11 +105,50 @@ exit
 ```
 
 ```
-scp   control1:cnx-node   .   
-sudo   mv   cnx-node   /usr/local/bin/   
-sudo   chown   root.root   /usr/local/bin/cnx-node   
-sudo   chmod   755   /usr/local/bin/cnx-node 
+scp control1:cnx-node .   
+sudo mv cnx-node /usr/local/bin/   
+sudo chown root.root /usr/local/bin/cnx-node   
+sudo chmod 755 /usr/local/bin/cnx-node 
 ```
+
+Calico will be started with a configuration file  ```/etc/calico/calico.env``` from a systemd unit file
+
+```
+sudo   mkdir   /etc/calico   
+```
+
+```
+sudo bash -c 'cat << EOF > /etc/calico/calico.env       
+FELIX_DATASTORETYPE=kubernetes   
+KUBECONFIG=/home/tigera/.kube/config   
+CALICO_NETWORKING_BACKEND=none   
+FELIX_FAILSAFEINBOUNDHOSTPORTS="tcp:0.0.0.0/0:22,udp:0.0.0.0/0:68,udp:0.0.0.0/ 
+0:53,tcp:0.0.0.0/0:179"   
+FELIX_FAILSAFEOUTBOUNDHOSTPORTS="tcp:0.0.0.0/0:22,udp:0.0.0.0/0:53,udp:0.0.0.0 
+/0:67,tcp:0.0.0.0/0:179,tcp:0.0.0.0/0:6443"   
+EOF'  
+```
+
+```
+sudo bash -c 'cat << EOF > /etc/systemd/system/calico.service   
+[Unit]   
+Description=Calico Felix agent   
+After=syslog.target network.target   
+ 
+[Service]   
+User=root   
+EnvironmentFile=/etc/calico/calico.env   
+ExecStartPre=/usr/bin/mkdir -p /var/run/calico   
+ExecStart=/usr/local/bin/cnx-node -felix   
+KillMode=process   
+Restart=on-failure   
+LimitNOFILE=32000   
+ 
+[Install]   
+WantedBy=multi-user.target   
+EOF' 
+```
+
 
 ## Step 2: Install kubectl binary with curl on Linux
 https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux <br/>
